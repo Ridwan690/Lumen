@@ -114,15 +114,55 @@ class UserController extends Controller
 
 
     public function index() {
+
         $users = User::all();
         return response()->json(['data' => $users], 200);
     }
 
+    public function store(Request $request) {
+
+        $input = $request->all();
+        $users = User::create($input);
+
+        return response()->json(['data' => $users], 200);
+    }
+
     public function show($id) {
+        
         $users = User::find($id);
         if (!$users) {
-            return response()->json(['message' => 'User not found'], 404);
+            abort(404);
         }
         return response()->json(['data' => $users], 200);
+    }
+
+    public function update(Request $request, $id) {
+
+        $input = $request->all();
+
+        $users = User::find($id);
+
+        if (!$users) {
+            abort(404);
+        }
+
+        $users->fill($input);
+        $users->save();
+
+        return response()->json(['data' => $users], 200);
+    }
+
+    public function destroy($id) {
+
+        $users = User::find($id);
+
+        if (!$users) {
+            abort(404);
+        }
+
+        $users->delete();
+        $message = ['message' => 'deleted successfully', 'user_id' => $id];
+
+        return response()->json($message, 200);
     }
 }

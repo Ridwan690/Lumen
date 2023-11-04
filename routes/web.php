@@ -67,20 +67,41 @@ $router->get('/landingpage', ['middleware' => 'user', function () {
 
 
 // Post
-$router->get('/posts', 'PostsController@index');
+$router->get('/post', 'PostsController@index');
+$router->post('/post', 'PostsController@store');
+$router->get('/post/{id}', 'PostsController@show');
+$router->put('/post/{id}', 'PostsController@update');
+$router->delete('/post/{id}', 'PostsController@destroy');
+
 
 // Users
 $router->get('/users', 'UserController@index');
-$router->get('/users/{Id}', 'UserController@show');
+$router->post('/users', 'UserController@store');
+$router->get('/users/{id}', 'UserController@show');
+$router->put('/users/{id}', 'UserController@update');
+$router->delete('/users/{id}', 'UserController@destroy');
 
 // Book
 $router->get('/books', 'BookController@index');
+$router->post('/books', 'BookController@store');
+$router->get('/books/{id}', 'BookController@show');
+$router->put('/books/{id}', 'BookController@update');
+$router->delete('/books/{id}', 'BookController@destroy');
 
 // Product
 // $router->get('/product', 'ProductController@index');
 
+//Barang
 $router->get('/barang', 'BarangsController@index');
+$router->post('/barang', 'BarangsController@store');
+$router->get('/barang/{id}', 'BarangsController@show');
+$router->put('/barang/{id}', 'BarangsController@update');
+$router->delete('/barang/{id}', 'BarangsController@destroy');
 
 // Address
 $router->get('/address', 'AddressesController@index');
+$router->post('/address', 'AddressesController@store');
+$router->get('/address/{id}', 'AddressesController@show');
+$router->put('/address/{id}', 'AddressesController@update');
+$router->delete('/address/{id}', 'AddressesController@destroy');
 

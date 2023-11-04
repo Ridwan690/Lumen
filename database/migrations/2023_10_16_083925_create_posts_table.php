@@ -10,18 +10,21 @@ return new class extends Migration
      * Run the migrations.
      */
     public function up(): void
-    {
-        Schema::create('posts', function (Blueprint $table) {
-            $table->bigIncrements('id');
+{
+    Schema::create('posts', function (Blueprint $table) {
+        $table->bigIncrements('id');
 
-            $table->string('title', 100);
-            $table->enum('status', array('draf','published'))->default('draf');
-            $table->text('content', 65535);
-            $table->integer('user_id')->index('user_id_foreign');
+        $table->string('title',100);
+        $table->enum('status', array('draft', 'published'))->default('draft');
+        $table->text('content', 65535);
+        $table->integer('user_id')->index('user_id_foreign');
+        
+        $table->string('author_name', 100)->nullable();
+        $table->boolean('is_featured')->default(false);
 
-            $table->timestamps();
-        });
-    }
+        $table->timestamps();
+    });
+}
 
     /**
      * Reverse the migrations.

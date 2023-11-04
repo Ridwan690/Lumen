@@ -6,6 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Barang extends Model
 {
-    protected $fillable = ['nama', 'deskripsi', 'harga', 'stok'];
+    protected $fillable = ['nama', 'deskripsi', 'harga', 'stok', 'kategori', 'tersedia'];
 
 }

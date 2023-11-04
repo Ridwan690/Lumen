@@ -9,6 +9,9 @@ class Book extends Model {
         'title',
         'author',
         'genre',
+        'publisher',
+        'is_available',
+        'description'
     ];
 
 }
