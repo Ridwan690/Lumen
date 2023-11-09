@@ -13,7 +13,7 @@ class Post extends Model
     //     'user_id',
     // ];
 
-    protected $fillable = array('tittle', 'status', 'content', 'user_id', 'author_name', 'is_featured');
+    protected $fillable = array('title', 'status', 'content', 'user_id', 'author_name', 'is_featured');
 
     public $timestamps = true;
 }
