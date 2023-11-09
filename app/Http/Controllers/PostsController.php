@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Post;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class PostsController extends Controller
 {
@@ -17,14 +18,24 @@ class PostsController extends Controller
         // ];
 
         // return response()->json($posts, 200);
-
+        
         $acceptHeader = $request->header('Accept');
+        $posts = Post::OrderBy("id", "ASC")->paginate(2)->toArray();
+            $response = [
+                "total_count" => $posts["total"],
+                "limit" => $posts["per_page"],
+                "pagination" => [
+                    "next_page" => $posts["next_page_url"],
+                    "current_page" => $posts["current_page"]
+                ],
+                "data" => $posts["data"],
+            ];
+
 
         if ($acceptHeader === 'application/json'|| $acceptHeader === 'application/xml') {
-            $posts = Post::OrderBy("id", "DESC")->paginate(10);
                 //JSON
             if ($acceptHeader === 'application/json') {
-                return response()->json($posts->items('data'), 200);
+                return response()->json($response, 200);
             } else {
                 // XML
                 $xml = new \SimpleXMLElement('<posts/>');
@@ -47,7 +58,7 @@ class PostsController extends Controller
 
         } else {
             return response('Not Acceptable', 406);
-    } 
+        } 
     }
 
     public function store(Request $request) 
@@ -60,11 +71,23 @@ class PostsController extends Controller
         $acceptHeader = $request->header('Accept');
 
         if ($acceptHeader === 'application/json' || $acceptHeader === 'application/xml') {
-            
             $contentTypeHeader = $request->header('Content-Type');
 
             if ($contentTypeHeader === 'application/json') {
                 $input = $request->all();
+                $validationRules = [
+                    'title' => 'required|min:5',
+                    'status' => 'required|in:draft,published',
+                    'content' => 'required|min:10',
+                    'user_id' => 'required|numeric',
+                    'author_name' => 'required|min:5',
+                    'is_featured' => 'required|boolean'
+                ];
+                $validator = Validator::make($input, $validationRules);
+
+                if ($validator->fails()) {
+                    return response()->json($validator->errors(), 400);
+                }
 
                 $post = Post::create($input);
                 return response()->json($post, 200);
@@ -147,6 +170,20 @@ class PostsController extends Controller
 
                 if(!$post) {
                     return response('post not found', 404);
+                }
+
+                $validationRules = [
+                    'title' => 'required|min:5',
+                    'status' => 'required|in:draft,published',
+                    'content' => 'required|min:10',
+                    'user_id' => 'required|numeric',
+                    'author_name' => 'required|min:5',
+                    'is_featured' => 'required|boolean'
+                ];
+                $validator = Validator::make($input, $validationRules);
+
+                if ($validator->fails()) {
+                    return response()->json($validator->errors(), 400);
                 }
 
                 $post->fill($input);
