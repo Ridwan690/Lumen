@@ -9,9 +9,10 @@ class Book extends Model {
         'title',
         'author',
         'genre',
+        'user_id',
         'publisher',
         'is_available',
-        'description'
     ];
 
+    public $timestamps = true;
 }

@@ -67,11 +67,19 @@ $router->get('/landingpage', ['middleware' => 'user', function () {
 
 
 // Post
-$router->get('/post', 'PostsController@index');
-$router->post('/post', 'PostsController@store');
-$router->get('/post/{id}', 'PostsController@show');
-$router->put('/post/{id}', 'PostsController@update');
-$router->delete('/post/{id}', 'PostsController@destroy');
+Route::group(['middleware' => ['auth']], function ($router) {
+    $router->get('/posts', 'PostsController@index');
+    $router->post('/posts', 'PostsController@store');
+    $router->get('/posts/{id}', 'PostsController@show');
+    $router->put('/posts/{id}', 'PostsController@update');
+    $router->delete('/posts/{id}', 'PostsController@destroy');
+});
+
+$router->group(['prefix' => 'auth'], function () use ($router) {
+    $router->post('/register', 'AuthController@register');
+    $router->post('/login', 'AuthController@login');
+
+});
 
 
 // Users
@@ -82,11 +90,13 @@ $router->put('/users/{id}', 'UserController@update');
 $router->delete('/users/{id}', 'UserController@destroy');
 
 // Book
-$router->get('/books', 'BookController@index');
-$router->post('/books', 'BookController@store');
-$router->get('/books/{id}', 'BookController@show');
-$router->put('/books/{id}', 'BookController@update');
-$router->delete('/books/{id}', 'BookController@destroy');
+Route::group(['middleware' => ['auth']], function ($router) {
+    $router->get('/books', 'BookController@index');
+    $router->post('/books', 'BookController@store');
+    $router->get('/books/{id}', 'BookController@show');
+    $router->put('/books/{id}', 'BookController@update');
+    $router->delete('/books/{id}', 'BookController@destroy');
+});
 
 // Product
 // $router->get('/product', 'ProductController@index');

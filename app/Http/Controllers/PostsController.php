@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
 
 class PostsController extends Controller
 {
@@ -20,7 +21,8 @@ class PostsController extends Controller
         // return response()->json($posts, 200);
         
         $acceptHeader = $request->header('Accept');
-        $posts = Post::OrderBy("id", "ASC")->paginate(2)->toArray();
+        // $posts = Post::OrderBy("id", "ASC")->paginate(2)->toArray();
+        $posts = Post::Where(['user_id' => Auth::user()->id])->OrderBy("id", "DESC")->paginate(2)->toArray();
             $response = [
                 "total_count" => $posts["total"],
                 "limit" => $posts["per_page"],
