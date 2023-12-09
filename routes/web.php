@@ -81,6 +81,10 @@ $router->group(['prefix' => 'auth'], function () use ($router) {
 
 });
 
+// Public Post
+$router->get('/public/posts', 'PublicController\PostsController@index');
+$router->get('/public/posts/{id}', 'PublicController\PostsController@show');
+
 
 // Users
 $router->get('/users', 'UserController@index');

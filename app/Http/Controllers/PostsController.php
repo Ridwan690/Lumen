@@ -6,6 +6,8 @@ use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
+
 
 class PostsController extends Controller
 {
@@ -21,8 +23,22 @@ class PostsController extends Controller
         // return response()->json($posts, 200);
         
         $acceptHeader = $request->header('Accept');
-        // $posts = Post::OrderBy("id", "ASC")->paginate(2)->toArray();
-        $posts = Post::Where(['user_id' => Auth::user()->id])->OrderBy("id", "DESC")->paginate(2)->toArray();
+
+        if (Gate::denies('read-post')){
+            return response()->json([
+                'success' => false,
+                'status' => 403,
+                'message' => 'You are unauthorized'
+            ], 403);
+        }
+
+        if(Auth::user()->role === 'admin'){
+            $posts = Post::OrderBy("id", "DESC")->paginate(2)->toArray();
+        } else {
+            $posts = Post::Where(['user_id' => Auth::user()->id])->OrderBy("id", "DESC")->paginate(2)->toArray();
+        }
+        
+        
             $response = [
                 "total_count" => $posts["total"],
                 "limit" => $posts["per_page"],
@@ -71,6 +87,14 @@ class PostsController extends Controller
             // return response()->json(['data' => $post], 200); 
 
         $acceptHeader = $request->header('Accept');
+
+        if (Gate::denies('create-post')) {
+            return response()->json([
+                'success' => false,
+                'status' => 403,
+                'message' => 'You are unauthorized to create post'
+            ], 403);
+        }
 
         if ($acceptHeader === 'application/json' || $acceptHeader === 'application/xml') {
             $contentTypeHeader = $request->header('Content-Type');
@@ -127,11 +151,20 @@ class PostsController extends Controller
     public function show(Request $request, $id)
     {
         $acceptHeader = $request->header("Accept");
+
         if ($acceptHeader == "application/json"){
             $post = Post::find($id);
 
             if(!$post) {
                 abort(404);
+            }
+
+            if (Gate::denies('show-post', $post)) {
+                return response()->json([
+                    'success' => false,
+                    'status' => 403,
+                    'message' => 'You are not authorized to do show by ID '
+                ], 403);
             }
 
         return response()->json($post, 200);
@@ -172,6 +205,14 @@ class PostsController extends Controller
 
                 if(!$post) {
                     return response('post not found', 404);
+                }
+
+                if (Gate::denies('update-post', $post)) {
+                    return response()->json([
+                        'success' => false,
+                        'status' => 403,
+                        'message' => 'You are not authorized to update the post'
+                    ], 403);
                 }
 
                 $validationRules = [
@@ -235,6 +276,14 @@ class PostsController extends Controller
 
             if(!$post) {
                 return response('post not found', 404);
+            }
+
+            if (Gate::denies('delete-post', $post)) {
+                return response()->json([
+                    'success' => false,
+                    'status' => 403,
+                    'message' => 'You are unauthorized to delete post'
+                ], 403);
             }
 
             $post->delete();
