@@ -73,7 +73,16 @@ Route::group(['middleware' => ['auth']], function ($router) {
     $router->get('/posts/{id}', 'PostsController@show');
     $router->put('/posts/{id}', 'PostsController@update');
     $router->delete('/posts/{id}', 'PostsController@destroy');
+
+    
+
+    $router->post('/profiles', 'ProfilesController@store');
 });
+
+$router->get('/posts/image/{imageName}', 'PostsController@image');
+// Profile routing
+$router->get('profile/{userId}', 'ProfilesController@show');
+$router->get('profile/image/{imageName}', 'ProfilesController@image');
 
 $router->group(['prefix' => 'auth'], function () use ($router) {
     $router->post('/register', 'AuthController@register');

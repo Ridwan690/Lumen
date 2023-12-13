@@ -96,7 +96,7 @@ class PostsController extends Controller
             ], 403);
         }
 
-        if ($acceptHeader === 'application/json' || $acceptHeader === 'application/xml') {
+        if ($acceptHeader === 'application/json' || $acceptHeader === 'application/xml' ) {
             $contentTypeHeader = $request->header('Content-Type');
 
             if ($contentTypeHeader === 'application/json') {
@@ -140,7 +140,46 @@ class PostsController extends Controller
                             return response('Internal Error', 500);
                         }
                     }
-            } 
+        // Upload Media            
+            } else {
+                $input = $request->all();
+
+                $validationRules = [
+                    'title' => 'required|min:5',
+                    'status' => 'required|in:draft,published',
+                    'content' => 'required|min:10',
+                    'user_id' => 'required|numeric',
+                    'author_name' => 'required|min:5',
+                    'is_featured' => 'required|boolean'
+                ];
+
+                $validator = \Validator::make($input, $validationRules);
+
+                if ($validator->fails()) {
+                    return response()->json($validator->errors(), 400);
+                }
+
+                $post = Post::create($input);
+
+                if ($request->hasFile('image')) {
+
+                    $firName = str_replace(' ', '_', $input['title']);
+
+                    $imgName = $post->id . '_' . $firName . '_' . 'image';
+
+                    $request->file('image')->move(storage_path('upload/image_profile'), $imgName);
+
+                    $current_image_path = storage_path('upload/image_profile') . '/' . $post->image;
+                    if (file_exists($current_image_path)) {
+                        unlink($current_image_path);
+                    }
+
+                    $post->image = $imgName;
+                }
+                $post->save();
+
+                return response()->json($post, 200);
+            }
         } else {
             return response('Not Acceptable!', 406);
         }
@@ -309,5 +348,17 @@ class PostsController extends Controller
         }else{
             return response('Not Acceptable!', 406);
         }
+    }
+
+    public function image($imageName) {
+        $imagePath = storage_path('upload/image_profile') . '/' . $imageName;
+
+
+        if (file_exists($imagePath)) {
+            $file = file_get_contents($imagePath);
+            return response($file, 200)->header('Content-Type', 'image/jpeg');
+        }
+
+        return response('Not Found', 404);
     }
 }
