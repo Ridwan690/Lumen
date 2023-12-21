@@ -15,7 +15,7 @@ class PostsController extends Controller
      */
     public function index()
     {
-        $posts = Post::OrderBy("id", "ASC")->paginate(10)->toArray();
+        $posts = Post::with('user')->OrderBy("id", "DESC")->paginate(10)->toArray();
         $response = [
             "total_count" => $posts["total"],
             "limit" => $posts["per_page"],
@@ -25,6 +25,7 @@ class PostsController extends Controller
             ],
             "data" => $posts["data"],
         ];
+        //dd($response);
 
         return response()->json($response, 200);
     }
