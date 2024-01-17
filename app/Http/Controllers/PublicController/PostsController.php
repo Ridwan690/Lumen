@@ -31,8 +31,7 @@ class PostsController extends Controller
      */
     public function index(Request $request)
     {
-        $acceptHeader = $request->header('Accept');
-        $posts = Post::with('user')->OrderBy("id", "DESC")->paginate(10);
+        $posts = Post::OrderBy("id", "ASC")->paginate(10)->toArray();
         $response = [
             "total_count" => $posts["total"],
             "limit" => $posts["per_page"],
@@ -43,6 +42,8 @@ class PostsController extends Controller
             "data" => $posts["data"],
         ];
         //dd($response);
+
+        $acceptHeader = $request->header("Accept");
 
         if ($acceptHeader === 'application/json' || $acceptHeader === 'application/xml') {
             //JSON
