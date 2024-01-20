@@ -14,7 +14,7 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         //
-        \App\Console\Commands\SwaggerDocScanner::class
+        \App\Console\Commands\SwaggerDocScanner::class,
     ];
 
     /**

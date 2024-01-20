@@ -5,25 +5,42 @@ namespace App\Http\Controllers\PublicController;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Post;
+use OpenApi\Annotations\PathItem;
+
+/**
+ * @OA\Get(
+ *   path="/public/posts",
+ *   summary = "Get Public posts",
+ *   tags={"public/posts"},
+ *   @OA\Parameter(name="page",
+ *     in="query",
+ *     required=false,
+ *     @OA\Schema(type="number")
+ *   ),
+ *   @OA\Response(
+ *     response=200,
+ *     description="OK"
+ *   )
+ * ),
+ * @OA\Get(
+ *   path="/public/posts/{id}",
+ *   summary="Get Public Posts by id",
+ *   tags={"public/posts"},
+ *   @OA\Parameter(name="id",
+ *     in="path",
+ *     required=true,
+ *     @OA\Schema(type="number")
+ *   ),
+ *   @OA\Response(
+ *     response=200,
+ *     description="OK"
+ *   )
+ *  )
+ */
+
 
 class PostsController extends Controller
 {
-    /**
-     * @OA\Get(
-     *    path="/api/public/posts",
-     *    summary="Get list of posts",
-     *    @OA\Parameter(name="page",
-     *    in="query",
-     *    required=false,
-     *    @OA\Schema(type="number")
-     * ),
-     * @OA\Response(
-     *    response=200,
-     *    description="OK"
-     *    )
-     * )
-     */
-
     /**
      * Display a listing of the resource.
      *
